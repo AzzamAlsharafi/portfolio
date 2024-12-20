@@ -2,8 +2,8 @@
 # Refer to the theme docs for more details about each of these parameters.
 # https://blowfish.page/docs/getting-started/
 
-# theme = "blowfish" # UNCOMMENT THIS LINE
-# baseURL = "https://your_domain.com/"
+theme = "blowfish"
+baseURL = "https://azzam.alsharafi.dev/"
 defaultContentLanguage = "en"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
@@ -25,10 +25,11 @@ enableEmoji = true
   anchor = 'Center'
 
 [taxonomies]
-  tag = "tags"
-  category = "categories"
-  author = "authors"
-  series = "series"
+  # tag = "tags"
+  # category = "categories"
+  # author = "authors"
+  # series = "series"
+  technology = "technologies"
 
 [sitemap]
   changefreq = 'daily'
@@ -42,21 +43,21 @@ enableEmoji = true
   threshold = 0
   toLower = false
 
-    [[related.indices]]
-        name = "tags"
-        weight = 100
+    # [[related.indices]]
+    #     name = "tags"
+    #     weight = 100
 
-    [[related.indices]]
-        name = "categories"
-        weight = 100
+    # [[related.indices]]
+    #     name = "categories"
+    #     weight = 100
 
-    [[related.indices]]
-        name = "series"
-        weight = 50
+    # [[related.indices]]
+    #     name = "series"
+    #     weight = 50
 
-    [[related.indices]]
-        name = "authors"
-        weight = 20
+    # [[related.indices]]
+    #     name = "authors"
+    #     weight = 20
 
     [[related.indices]]
         name = "date"
