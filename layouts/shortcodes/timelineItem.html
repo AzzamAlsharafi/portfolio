@@ -3,9 +3,10 @@
 {{ $badge := .Get "badge" }}
 {{ $subheader := .Get "subheader" }}
 {{ $text := .Get "text" }}
+{{ $color := .Get "color" }}
 <li>
   <div class="flex flex-start">
-    <img class="bg-primary-500 dark:bg-primary-300 timelineLogo" src="{{ $icon }}"/>
+    <img class="border-primary-500 dark:border-primary-300 bg-{{ $color }} timelineLogo" src="{{ $icon }}"/>
     <div class="block p-6 rounded-lg shadow-2xl min-w-full ml-2 sm:ml-6 mb-10 break-words">
       <div class="flex justify-between">
         {{ if $header }}
