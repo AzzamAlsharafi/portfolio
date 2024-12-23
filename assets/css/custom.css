@@ -20,9 +20,20 @@
         object-fit: contain;
         border-radius: 4%;
     }
+
+    .timelineLogo {
+        position: relative;
+        min-width: 50px;
+        width: 50px;
+        height: 50px;
+        margin-left: -58px;
+        padding: 5px;
+        padding: 2px;
+        border-radius: 20%;
+    }
 }
 
-@media screen and (min-width: 700px) {
+@media screen and (min-width: 640px) {
     .customEntitityLogo {
         position: relative;
         min-width: 80px;
@@ -35,6 +46,17 @@
         padding: 8px;
         object-fit: contain;
         border-radius: 4%;
+    }
+
+    .timelineLogo {
+        position: relative;
+        min-width: 80px;
+        width: 80px;
+        height: 80px;
+        margin-left: -75px;
+        padding: 8px;
+        padding: 2px;
+        border-radius: 20%;
     }
 }
 
@@ -51,6 +73,16 @@
         padding: 8px;
         object-fit: contain;
         border-radius: 4%;
+    }
+
+    .timelineLogo {
+        position: relative;
+        min-width: 100px;
+        width: 100px;
+        height: 100px;
+        margin-left: -85px;
+        padding: 2px;
+        border-radius: 20%;
     }
 }
 
