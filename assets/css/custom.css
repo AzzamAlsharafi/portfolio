@@ -31,6 +31,10 @@
         padding: 2px;
         border-radius: 20%;
     }
+
+    .ml-4 {
+        margin-left:1rem
+    }
 }
 
 @media screen and (min-width: 640px) {
@@ -57,6 +61,14 @@
         padding: 8px;
         padding: 2px;
         border-radius: 20%;
+    }
+
+    .sm\:ml-0 {
+        margin-left:0px
+    }
+    
+    .sm\:ml-6 {
+        margin-left:1.5rem
     }
 }
 
