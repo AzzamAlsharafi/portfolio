@@ -8,7 +8,7 @@ description: "A network management system to manage hybrid SDN
 networks (consisting of SDN and traditional non-SDN
 devices) allowing users to configure various policies using a unified
 GUI environment."
-technologies: [SDN, OpenFlow, Ryu Controller, NETCONF, Python, React]
+technologies: [SDN, OpenFlow, Ryu Framework, NETCONF, Python, React]
 date: 2024-12-20
 draft: false
 showauthor: false
@@ -16,18 +16,20 @@ showauthor: false
 
 {{< github repo="AzzamAlsharafi/FYP-hSDN" >}}
 
-A network management system to manage hybrid SDN
-networks (consisting of SDN and traditional non-SDN
+A network management system to manage hybrid [SDN]
+networks (consisting of [SDN] and traditional non-SDN
 devices) allowing users to configure various policies using a unified
 GUI environment.
 
 {{< youtubeLite id="8IWqjOU-V7w" label="Demo" >}}
 
+<figcaption>This video was originally part of a recorded presentation. Presentation audio has been removed.</figcaption>
+
 ## Overview
 
-The Hybrid SDN Network Management System is designed to manage hybrid networks that include both SDN *(Software-Defined Networking)* and traditional non-SDN devices. The system provides a unified, user-friendly GUI that enables configuration, and monitoring of network devices.
+The Hybrid [SDN] Network Management System is designed to manage hybrid networks that include both [SDN] *(Software-Defined Networking)* and traditional non-SDN devices. The system provides a unified, user-friendly GUI that enables configuration, and monitoring of network devices.
 
-At the heart of the system is a modular controller built with the Ryu framework, which allows communication with SDN devices using OpenFlow, while also incorporating NETCONF support for managing traditional network devices. This dual compatibility allows management of hybrid network infrastructures from a single platform.
+At the heart of the system is a modular controller built with the [Ryu framework], which allows communication with [SDN] devices using [OpenFlow], while also incorporating [NETCONF] support for managing traditional network devices. This dual compatibility allows management of hybrid network infrastructures from a single platform.
 
 The system implements policy management, allowing users to define and enforce network policies for flow management, routing, blocking, and more. Policies can be created, modified, or deleted through the GUI, offering flexibility in network management.
 
@@ -40,21 +42,34 @@ This section provides a general overview of the features offered by the system a
 ### Initial Setup
 
 * Networking devices must be accessible to management server (where the system is running).
-* Traditional devices must be pre-configured with a management address and have NETCONF enabled.
-* Traditional devices must be configured with the same NETCONF username and password.
+* Traditional devices must be pre-configured with a management address and have [NETCONF] enabled.
+* Traditional devices must be configured with the same [NETCONF] username and password.
 
 ### Adding devices
 
-* To add new traditional devices, users can either use the GUI or edit `config/netconf.txt` configuration file.
-* To add new SDN devices, simply configure the management server as the controller on the SDN device itself.
+* To add new traditional devices, users can either use the GUI or edit `config/netconf.txt` configuration file. Example:
+```bash
+# Example of a configuration file for classic devices (Non-SDN)
+# Empty lines, and lines beginning with '#' are ignored.
+
+# First two valid lines set NETCONF username and password for all devices
+user = USERNAME
+pass = PASSWORD
+
+# Each line represents a single device.
+# IPv4 address followed by hostname. Separated by a single space.
+192.168.1.11 R1
+192.168.1.12 R2
+192.168.1.21 R3
+192.168.1.22 R4
+```
+
+* To add new [SDN] devices, simply configure the management server as the controller on the [SDN] device itself.
 
 ### Network View
 
-{{< figure
-    src="featured_gui.png"
-    alt="System GUI"
-    caption="System GUI"
-    >}}
+![System GUI][img-gui]
+
 
 Users can monitor their network using the GUI. It displays a network summary panel on the side, and a visualization of active devices and their connections.
 The network graph is interactive allowing users to freely move nodes and organize the view as they see fit.
@@ -95,35 +110,30 @@ If multiple paths are possible, the system will present a list of the best route
 ## System Design
 
 The system consists of three primary components, each of which is built using a different framework:
-* **Controller:** Manages communication with networking devices. Built using [**Ryu Framework**](https://github.com/faucetsdn/ryu).
-* **GUI Application:** The Graphical User Interface. Built using [**React**](https://github.com/facebook/react).
-* **API:** Connection link between the Controller and the GUI. Built using [**FastAPI**](https://github.com/fastapi/fastapi).
+* **Controller:** Manages communication with networking devices. Built using [Ryu framework].
+* **GUI Application:** The Graphical User Interface. Built using [React].
+* **API:** Connection link between the Controller and the GUI. Built using [FastAPI].
 
-{{< figure
-    src="architecture.png"
-    alt="System Architecture Diagram"
-    caption="Diagram of system architecture"
-    class="bg-white p-4"
-    >}}
+![System Architecture Diagram][img-architecture]
 
 ### Controller
 
-The Controller is the heart of the system. Built using Ryu framework, it is responsible for managing and controlling networking devices through nine different specialized modules.
+The Controller is the heart of the system. Built using [Ryu framework], it is responsible for managing and controlling networking devices through nine different specialized modules, as shown in the above diagram.
 
 #### Ryu Framework
-Ryu is a **Python**-based framework for developing SDN systems. The framework offers two main capabilities:
-* A modular architecture, where each module runs as a '*Ryu Application*'. Ryu runs each application in its own thread, and allows inter-module communication
+[Ryu] is a **Python**-based framework for developing [SDN] systems. The framework offers two main capabilities:
+* A modular architecture, where each module runs as a '*Ryu Application*'. [Ryu] runs each application in its own thread, and allows inter-module communication
 through message-passing.
-* Built-in OpenFlow support for every application, enabling applications 
-to recieve and send OpenFlow messages to OpenFlow-enabled switches.
+* Built-in [OpenFlow] support, enabling applications 
+to recieve and send [OpenFlow] messages to OpenFlow-enabled switches.
 
 #### Traditional Devices Management
-While SDN devices can be managed using the built-in OpenFlow support, traditional devices require NETCONF protocol for their communication. 
-The NETCONF Controller achieves that by establishing and maintaining NETCONF connections with the registered traditional devices. 
+While [SDN] devices can be managed using the built-in [OpenFlow] support, traditional devices require [NETCONF] protocol for their communication. 
+The **NETCONF Controller** module achieves that by establishing and maintaining [NETCONF] connections with the registered traditional devices. 
 Other modules utilize this module to perform any function on traditional devices.
 
 #### Topology Discovery
-Topology discovery is achieved using Topology Discovery Unit, which manages the network topology using **LLDP**. 
+Topology discovery is achieved using **Topology Discovery Unit**, which manages the network topology using [LLDP]. 
 This is done by: 
 * Detecting and registering new devices. 
 * Keeping track of devices status and availability.
@@ -131,41 +141,50 @@ This is done by:
 * Monitoring for any topology changes.
 
 The unit comprises the following three modules:
-* **Classic Topology Discovery:** Perform topology discovery on traditional devices, making use of the NETCONF Controller for
+* **Classic Topology Discovery:** Perform topology discovery on traditional devices, making use of the **NETCONF Controller** module for
 its communication with the traditional devices.
 
-* **SDN Topology Discovery:** Handles topology discovery on SDN devices. It communicates with the devices
-directly through Ryu Framework native OpenFlow support.
+* **SDN Topology Discovery:** Handles topology discovery on [SDN] devices. It communicates with the devices
+directly through [Ryu framework] native [OpenFlow] support.
 
 * **Topology Manager:** Collects discovery data from both discovery modules, combining the data to generate a uniform topology for the whole network.
 
-{{< figure
-    src="topology-discovery.png"
-    alt="Topology Discovery Process"
-    caption="Topology discovery visualization showing how each device is only aware of directly connected devices"
-    class="bg-white p-4"
-    >}}
+![Topology Discoevry Process][img-topology]
 
 #### Policies Management
-The Policy Manager module provides management of user-defined policies. While policies are defined via the GUI, the Policy Manager handles:
+The **Policy Manager** module provides management of user-defined policies. While policies are defined via the GUI, the **Policy Manager** handles:
 * Storage of policies.
 * Validation of new policies.
 * Exposing the policies to other parts of the system.
 
 #### Device Configuration
 Configurations are specified using high-level user-defined policies, 
-which are taken by the Configuration Unit to be translated to appropriate per-device configurations. 
+which are taken by the **Configuration Unit** to be translated to appropriate per-device configurations. 
 
-The Configuration Unit, similarly to Topology Discovery Unit, comprises three modules:
+The **Configuration Unit**, similarly to **Topology Discovery Unit**, comprises three modules:
 * **Configuration Generator:** Combines user-defined policies with the current network topology to generate per-device configurations. New configurations are
 generated whenver the policies or the topology changes.
-* **Classic Configurator:** Handles traditional devices configuration by using NETCONF Controller to send appropriate NETCONF commands to
+* **Classic Configurator:** Handles traditional devices configuration by using **NETCONF Controller** to send appropriate [NETCONF] commands to
 each traditional devices to apply its generated configurations.
-* **SDN Configurator:** Manages configurations for SDN devices by sending OpenFow messages to each device to apply the configurations.
+* **SDN Configurator:** Manages configurations for [SDN] devices by sending [OpenFlow] messages to each device to apply the configurations.
 
 ### GUI
-The GUI is developed using React Framework. The network visualization is implemented using the [ReactFlow](https://reactflow.dev/) library.
+The GUI is developed using [React] Framework. The network visualization is implemented using the [ReactFlow] library.
 
 ### API
-The system includes a simple API that is used to faciliate communication between the Controller and the GUI. The Controller uses the API to expose active topology
-and policies, while the GUI uses it to send instructions to the Controller to create new policies or register traditional devices.
+The system includes a simple API developed using [FastAPI]. The API is used to faciliate communication between the Controller and the GUI. The Controller uses it to expose active topology
+and policies, while the GUI uses it to send instructions to the Controller to create new policies or register new traditional devices.
+
+[SDN]: https://en.wikipedia.org/wiki/Software-defined_networking
+[Ryu framework]: https://github.com/faucetsdn/ryu
+[Ryu]: https://github.com/faucetsdn/ryu
+[OpenFlow]: https://en.wikipedia.org/wiki/OpenFlow
+[NETCONF]: https://en.wikipedia.org/wiki/NETCONF
+[React]: https://react.dev/
+[ReactFlow]: https://reactflow.dev/
+[FastAPI]: https://fastapi.tiangolo.com/
+[LLDP]: https://en.wikipedia.org/wiki/Link_Layer_Discovery_Protocol
+
+[img-architecture]: ./architecture.png "Diagram of system architecture"
+[img-gui]: ./featured_gui.png "System GUI"
+[img-topology]: ./topology-discovery.png "Topology discovery visualization showing how each device is only aware of directly connected devices"
