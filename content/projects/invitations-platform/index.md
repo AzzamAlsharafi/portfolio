@@ -1,5 +1,5 @@
 ---
-title: Invitations Platfrom
+title: Invitations Platform
 summary: "A web application designed for creating event invitations,
 with a primary focus on weddings. It features a beautiful,
 smooth, and responsive design, allowing users to share
