@@ -1,0 +1,231 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css" referrerpolicy="no-referrer">
+<style>
+  #zlisp-terminal-container { padding: 16px; background: #111111; border-radius: 10px;}
+</style>
+
+<div id="zlisp-terminal-container">
+  <div id="zlisp-terminal"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+
+<script type="module">
+  (async () => {
+    // Initialize terminal
+    const term = new Terminal({
+      cursorBlink: true,
+      convertEol: true,
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      theme: { background: '#111111' },
+    });
+    const fitAddon = new FitAddon.FitAddon();
+    term.loadAddon(fitAddon);
+    const terminalElement = document.getElementById('zlisp-terminal');
+    term.open(terminalElement);
+    fitAddon.fit();
+
+    window.addEventListener('resize', () => {
+      fitAddon.fit();
+      renderLine(); // redraw after resize to keep cursor in place
+    });
+
+    // Load the Emscripten-generated module from /zlisp
+    const createModule = (await import('/zlisp/main.js')).default;
+    const Module = await createModule({
+      locateFile: (path) => `/zlisp/${path}`,
+      print: (text) => term.write(text + '\r\n'),
+    });
+
+    // Expose the C function execute
+    const exec = Module.cwrap('execute', 'void', ['string']);
+
+    const ESC = '\x1b[';
+    const promptLabel = 'z-lisp> ';
+
+    // Current editable line state
+    let buffer = '';
+    let cursor = 0; // cursor index within buffer (0..buffer.length)
+
+    // History
+    const history = [];
+    let historyIndex = history.length; // points to "virtual" slot after last entry
+
+    // --- helpers ---
+    const writePrompt = () => term.write(promptLabel);
+
+    // Re-render the current line and place cursor correctly
+    function renderLine() {
+      // CR, clear line, write prompt + buffer
+      term.write('\r' + ESC + 'K'); // erase entire line
+      term.write(promptLabel + buffer);
+      // Move cursor back from end-of-line to desired position
+      const back = buffer.length - cursor;
+      if (back > 0) term.write(ESC + back + 'D');
+    }
+
+    function insertText(text) {
+      if (!text) return;
+      buffer = buffer.slice(0, cursor) + text + buffer.slice(cursor);
+      cursor += text.length;
+      renderLine();
+    }
+
+    function backspace() {
+      if (cursor === 0) return;
+      buffer = buffer.slice(0, cursor - 1) + buffer.slice(cursor);
+      cursor -= 1;
+      renderLine();
+    }
+
+    function del() {
+      if (cursor >= buffer.length) return;
+      buffer = buffer.slice(0, cursor) + buffer.slice(cursor + 1);
+      renderLine();
+    }
+
+    function moveLeft(n = 1) {
+      const step = Math.min(n, cursor);
+      if (step > 0) {
+        cursor -= step;
+        term.write(ESC + step + 'D');
+      }
+    }
+
+    function moveRight(n = 1) {
+      const step = Math.min(n, buffer.length - cursor);
+      if (step > 0) {
+        cursor += step;
+        term.write(ESC + step + 'C');
+      }
+    }
+
+    function setLineFromHistory(i) {
+      historyIndex = i;
+      if (i >= history.length) {
+        buffer = '';
+      } else {
+        buffer = history[i];
+      }
+      cursor = buffer.length;
+      renderLine();
+    }
+
+    function submitLine() {
+      term.write('\r\n');
+      const toRun = buffer.trim();
+      if (toRun !== '') {
+        history.push(toRun);
+      }
+      historyIndex = history.length; // reset pointer to after last
+      exec(toRun);
+      buffer = '';
+      cursor = 0;
+      writePrompt();
+    }
+
+    // initial prompt
+    writePrompt();
+
+    // Handle "key" semantics (arrows, enter, etc.)
+    term.onKey(({ key, domEvent }) => {
+      const k = domEvent.key;
+
+      // Ctrl+C
+      if (domEvent.ctrlKey && k.toLowerCase() === 'c') {
+        term.write('^C\r\n');
+        buffer = '';
+        cursor = 0;
+        writePrompt();
+        return;
+      }
+
+      switch (k) {
+        case 'Enter':
+          submitLine();
+          return;
+
+        case 'Backspace':
+          backspace();
+          return;
+
+        case 'Delete':
+          del();
+          return;
+
+        case 'ArrowLeft':
+          moveLeft(1);
+          return;
+
+        case 'ArrowRight':
+          moveRight(1);
+          return;
+
+        case 'ArrowUp':
+          if (history.length === 0) return;
+          if (historyIndex > 0) {
+            setLineFromHistory(historyIndex - 1);
+          } else {
+            // already at oldest; keep it
+            setLineFromHistory(0);
+          }
+          return;
+
+        case 'ArrowDown':
+          if (historyIndex < history.length) {
+            setLineFromHistory(historyIndex + 1);
+          } else {
+            // already at "new" empty slot
+            setLineFromHistory(history.length);
+          }
+          return;
+
+        case 'Home':
+          // Move to start of input (after prompt)
+          const toStart = cursor;
+          if (toStart > 0) {
+            cursor = 0;
+            term.write(ESC + toStart + 'D');
+          }
+          return;
+
+        case 'End':
+          const toEnd = buffer.length - cursor;
+          if (toEnd > 0) {
+            cursor = buffer.length;
+            term.write(ESC + toEnd + 'C');
+          }
+          return;
+
+        default:
+          // Let printable text be handled by onData (supports paste)
+          return;
+      }
+    });
+
+    // Handle printable data (including multi-char paste)
+    term.onData((data) => {
+      // Ignore ANSI escape sequences (arrows etc.) which start with ESC
+      if (data && data.charCodeAt(0) === 0x1b) return;
+
+      // Tabs → 4 spaces
+      if (data === '\t') {
+        insertText('    ');
+        return;
+      }
+
+      // Newlines are handled in onKey('Enter'), so ignore here.
+      if (data === '\r' || data === '\n') return;
+
+      // Filter to printable ASCII; keep it simple (you can expand to unicode if you want)
+      // Also handle multi-character paste at once.
+      let printable = '';
+      for (let i = 0; i < data.length; i++) {
+        const ch = data[i];
+        if (ch >= ' ' && ch <= '~') printable += ch;
+      }
+      if (printable) insertText(printable);
+    });
+  })();
+</script>
+
