@@ -16,8 +16,10 @@ showPagination: false
 menu: main
 ---
 
-Software Developer & NetDevOps enthusiast with strong academic record in Computer Science (Computer Systems & Networks) at Universiti Malaya. 
+Software & Network Engineer with strong academic record in Computer Science (Computer Systems & Networks) at Universiti Malaya. 
+
+Experienced in full‑stack software development and systems engineering. Developed complex systems including a Hybrid SDN Management System using React and FastAPI, and a Lisp-like programming language interpreter implemented in C with WebAssembly support. Proficient in building responsive web applications and high‑performance system‑level software. Skilled in multiple programming languages including Python, Java, JavaScript, and C.
 
 Experienced in network automation, along with hands-on configuration of Cisco and Juniper devices. Skilled in cloud technologies, with practical knowledge of Linux and Docker administration. 
 
-Developed several projects including a Hybrid SDN Management System that combines traditional networking with modern SDN approaches. Proficient in multiple programming languages including Python, Java, JavaScript, and C. Graduating February 2025 and seeking opportunities in Network Engineering, Cloud, or DevOps roles.
+Seeking opportunities in Software Engineering, Network Engineering, Cloud, or DevOps roles.
