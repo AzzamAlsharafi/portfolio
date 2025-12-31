@@ -21,7 +21,17 @@ Download <a href="/resume.pdf" target="_blank">PDF resume</a>.
 
 {{< timeline >}}
 
-{{< timelineItem icon="ipserverone.jpeg" header="Network & DevOps Intern" badge="2024/07 - present" subheader="IP ServerOne - Petaling Jaya, Malaysia" >}}
+{{< timelineItem icon="caredoct.jpg" header="Full Stack Software Engineer" badge="2025/03 - present" subheader="CareDoct - Kuala Lumpur, Malaysia" >}}
+<ul>
+<li>Involved in high‑level technical planning, product architecture, infrastructure design, and problem‑solving with the engineering team.</li>
+<li>Rearchitectured existing applications to improve performance, reliability, and scalability.</li>
+<li>Developed <strong>AI-based</strong> medical industry applications using <strong>React</strong>, and <strong>FastAPI</strong>.</li>
+<li>Worked with <strong>MongoDB</strong>.</li>
+<li>Resolved critical cloud deployment issues and improved overall infrastructure.</li>
+</ul>
+{{< /timelineItem >}}
+
+{{< timelineItem icon="ipserverone.jpeg" header="Network & DevOps Intern" badge="2024/07 - 2024/12" subheader="IP ServerOne - Petaling Jaya, Malaysia" >}}
 <ul>
 <li>Automated network deployments with <strong>Ansible</strong> and <strong>Python</strong>. </li>
 <li>Built monitoring dashboards using <strong>Grafana</strong> and <strong>InfluxDB</strong>.</li>
